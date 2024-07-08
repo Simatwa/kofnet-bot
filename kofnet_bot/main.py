@@ -39,7 +39,7 @@ def sni_handler() -> kofnet.Manipulator:
     return cached_sni_manipulator
 
 
-def argument_required(help="Message is required!"):
+def argument_required(help="Argument is required!"):
     """Decorator for ensuring a command is followed by a value
 
     Args:
