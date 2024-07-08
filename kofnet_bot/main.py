@@ -17,7 +17,8 @@ usage_info = (
     "/country - Get a list of countries\n"
     "/sni - Get SNI for a particular country\n"
     "\t\te.g /sni KE\n"
-    "\t\te.g /sni Malaysia"
+    "\t\te.g /sni Malaysia\n\n"
+    "Made with ❤️ by @AlphaBei from Kenya 🇰🇪"
 )
 
 bot_cache = {
@@ -89,10 +90,13 @@ def inline_refresh_button(country_code: str):
 def echo_usage_info(message: types.Message):
     """Display help message"""
     bot_cache["stats"]["users"] += 1
-    markup = types.InlineKeyboardMarkup()
-    markup.add(inline_delete_button(message), row_width=1)
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    markup.add(inline_delete_button(message))
+    markup.add(
+        types.InlineKeyboardButton("Contact Developer", url="https://t.me/AlphaBei")
+    )
 
-    return bot.reply_to(message, usage_info)
+    return bot.reply_to(message, usage_info, reply_markup=markup)
 
 
 @bot.message_handler(commands=["country"])
@@ -169,6 +173,10 @@ def refresh_sni_bug_host(call: types.CallbackQuery):
         markup = types.InlineKeyboardMarkup(row_width=2)
         markup.add(inline_delete_button(call.message))
         markup.add(inline_refresh_button(code))
+        markup.add(
+            types.InlineKeyboardButton("Forward", switch_inline_query="Forward"),
+            row_width=1,
+        )
         bot.send_message(
             call.message.chat.id,
             modded_sni_bug_host,
@@ -191,7 +199,7 @@ def check_stats(message: types.Message):
     markup.add(inline_delete_button(message))
     return bot.send_message(
         message.chat.id,
-        text=f"```json\n{json.dumps(bot_cache['stats'])}\n```",
+        text=f"```json\n{json.dumps(bot_cache['stats'], indent=4)}\n```",
         parse_mode="Markdown",
         reply_markup=markup,
     )
