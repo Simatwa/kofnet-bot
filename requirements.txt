@@ -1,3 +1,4 @@
 pydantic==2.7.3
 python-dotenv==1.0.0
 pytelegrambotapi==4.17.0
+bs4==0.0.1
