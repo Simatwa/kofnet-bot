@@ -95,19 +95,6 @@ def inline_refresh_button(country_code: str):
     return button
 
 
-@bot.message_handler(commands=["start"])
-def echo_usage_info(message: types.Message):
-    """Display help message"""
-    bot_cache["stats"]["users"] += 1
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    markup.add(inline_delete_button(message))
-    markup.add(
-        types.InlineKeyboardButton("Contact Developer", url="https://t.me/AlphaBei")
-    )
-
-    return bot.reply_to(message, usage_info, reply_markup=markup)
-
-
 @bot.message_handler(commands=["country"])
 def echo_list_of_countries(message: types.Message):
     """Issue button to select countries"""
@@ -257,6 +244,19 @@ def check_stats(message: types.Message):
         parse_mode="Markdown",
         reply_markup=markup,
     )
+
+
+@bot.message_handler(func=lambda msg: True)
+def echo_usage_info(message: types.Message):
+    """Display help message"""
+    bot_cache["stats"]["users"] += 1
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    markup.add(inline_delete_button(message))
+    markup.add(
+        types.InlineKeyboardButton("Contact Developer", url="https://t.me/AlphaBei")
+    )
+
+    return bot.reply_to(message, usage_info, reply_markup=markup)
 
 
 bot.add_custom_filter(kofnet_bot.filters.IsAdminFilter())
