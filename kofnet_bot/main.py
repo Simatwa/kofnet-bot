@@ -222,7 +222,7 @@ def handle_inline_query(inline_query: telebot.types.InlineQuery):
         feedback_options = [
             telebot.types.InlineQueryResultArticle(
                 id="1",
-                title=f"SNI bug host for {country}",  # "AI Generated",
+                title=f"SNI bug host for {country}",
                 input_message_content=telebot.types.InputTextMessageContent(
                     extract_text_from_html(sni_bug_text)
                 ),
