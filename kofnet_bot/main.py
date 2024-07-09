@@ -221,7 +221,7 @@ def refresh_sni_bug_host(call: types.CallbackQuery):
         )
 
 
-@bot.inline_handler(lambda query: query.query.startwith("sni"))
+@bot.inline_handler(lambda query: query.query.startswith("sni"))
 def handle_inline_query(inline_query: telebot.types.InlineQuery):
     """Send back SNI bug host at inline"""
     try:
