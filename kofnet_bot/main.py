@@ -6,6 +6,7 @@ import json
 from telebot import types
 import kofnet_bot.config
 import kofnet_bot.filters
+from bs4 import BeautifulSoup
 
 bot = telebot.TeleBot(kofnet_bot.config.bot_config.token, disable_web_page_preview=True)
 
@@ -37,6 +38,11 @@ def sni_handler() -> kofnet.Manipulator:
         bot_cache["last_update_time"] = datetime.datetime.now()
         cached_sni_manipulator.update_cache()
     return cached_sni_manipulator
+
+
+def extract_text_from_html(html_content: str) -> str:
+    soup = BeautifulSoup(html_content, "html.parser")
+    return soup.get_text()
 
 
 def argument_required(help="Argument is required!"):
@@ -134,18 +140,31 @@ def echo_sni_bug_host(message: types.Message, key: str):
         sni_bug_host = manipulator.get_sni(code)
         modded_sni_bug_host = re.sub("\n$", "<br>", sni_bug_host)
         markup = types.InlineKeyboardMarkup(row_width=2)
-        markup.add(inline_delete_button(message))
-        markup.add(inline_refresh_button(code))
-        bot.send_message(
-            message.chat.id, modded_sni_bug_host, reply_markup=markup, parse_mode="HTML"
+        markup.add(inline_refresh_button(code), inline_delete_button(message))
+        markup.add(
+            types.InlineKeyboardButton("Forward", switch_inline_query=f"sni {code}"),
+            row_width=1,
         )
+        try:
+            bot.send_message(
+                message.chat.id,
+                modded_sni_bug_host,
+                reply_markup=markup,
+                parse_mode="HTML",
+            )
+        except telebot.apihelper.ApiTelegramException:
+            plain_text = extract_text_from_html(sni_bug_host)
+            bot.send_message(
+                message.chat.id,
+                plain_text,
+                reply_markup=markup,  # parse_mode="HTML"
+            )
 
     except KeyError:
         markup = types.InlineKeyboardMarkup(row_width=1)
         markup.add(inline_delete_button(message))
         return bot.reply_to(
-            message,
-            "The key does not match any country/code!",
+            message, "The key does not match any country/code!", reply_markup=markup
         )
 
 
@@ -173,18 +192,25 @@ def refresh_sni_bug_host(call: types.CallbackQuery):
         sni_bug_host = manipulator.get_sni(code)
         modded_sni_bug_host = re.sub("\n$", "<br>", sni_bug_host)
         markup = types.InlineKeyboardMarkup(row_width=2)
-        markup.add(inline_delete_button(call.message))
-        markup.add(inline_refresh_button(code))
+        markup.add(inline_refresh_button(code), inline_delete_button(call.message))
         markup.add(
-            types.InlineKeyboardButton("Forward", switch_inline_query="Forward"),
+            types.InlineKeyboardButton("Forward", switch_inline_query=f"sni {code}"),
             row_width=1,
         )
-        bot.send_message(
-            call.message.chat.id,
-            modded_sni_bug_host,
-            reply_markup=markup,
-            parse_mode="HTML",
-        )
+        try:
+            bot.send_message(
+                call.message.chat.id,
+                modded_sni_bug_host,
+                reply_markup=markup,
+                parse_mode="HTML",
+            )
+        except telebot.apihelper.ApiTelegramException:
+            plain_text = extract_text_from_html(sni_bug_host)
+            bot.send_message(
+                call.message.chat.id,
+                plain_text,
+                reply_markup=markup,  # parse_mode="HTML"
+            )
     except Exception as e:
         markup = types.InlineKeyboardMarkup(row_width=1)
         markup.add(inline_delete_button(call.message))
@@ -192,6 +218,31 @@ def refresh_sni_bug_host(call: types.CallbackQuery):
             call.message,
             text="An error occured and I couldn't complete that request!",
             reply_markup=markup,
+        )
+
+
+@bot.inline_handler(lambda query: query.query.startwith("sni"))
+def handle_inline_query(inline_query: telebot.types.InlineQuery):
+    """Process the inline query and return AI response"""
+    try:
+        _, code = inline_query.query.split(" ")
+        manipulator = sni_handler()
+        sni_bug_text = manipulator.get_sni(code)
+        country = manipulator.get_country(code)
+        feedback_options = [
+            telebot.types.InlineQueryResultArticle(
+                id="1",
+                title=f"SNI bug host for {country}",  # "AI Generated",
+                input_message_content=telebot.types.InputTextMessageContent(
+                    extract_text_from_html(sni_bug_text)
+                ),
+            )
+        ]
+        return bot.answer_inline_query(inline_query.id, feedback_options)
+
+    except Exception as e:
+        print(
+            f"Error while handling inline query : {e.args[1] if e.args and len(e.args)>1 else e}"
         )
 
 
