@@ -223,7 +223,7 @@ def refresh_sni_bug_host(call: types.CallbackQuery):
 
 @bot.inline_handler(lambda query: query.query.startwith("sni"))
 def handle_inline_query(inline_query: telebot.types.InlineQuery):
-    """Process the inline query and return AI response"""
+    """Send back SNI bug host at inline"""
     try:
         _, code = inline_query.query.split(" ")
         manipulator = sni_handler()
