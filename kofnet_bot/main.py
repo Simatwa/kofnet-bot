@@ -103,14 +103,16 @@ def echo_usage_info(message: types.Message):
 def echo_list_of_countries(message: types.Message):
     """Issue button to select countries"""
     markup = types.InlineKeyboardMarkup(row_width=3)
+    country_list: list[str] = []
     manipulator = sni_handler()
     for code in manipulator.get_code_sni_map():
         country = manipulator.get_country(code)
         if not country:
             continue
-        markup.add(
+        country_list.append(
             types.InlineKeyboardButton(text=country, callback_data="sni:" + code)
         )
+    markup.add(*country_list)
     markup.add(inline_delete_button(message), row_width=1)
     return bot.send_message(message.chat.id, "Select country", reply_markup=markup)
 
