@@ -9,6 +9,7 @@ import kofnet_bot.filters
 from bs4 import BeautifulSoup
 
 bot = telebot.TeleBot(kofnet_bot.config.bot_config.token, disable_web_page_preview=True)
+me = bot.get_me()
 
 usage_info = (
     "Welcome.\n"
@@ -19,6 +20,8 @@ usage_info = (
     "/sni - Get SNI for a particular country\n"
     "\t\te.g /sni KE\n"
     "\t\te.g /sni Malaysia\n\n"
+    f"Inline mode : @kofnet_bot sni [CODE]\n"
+    "\t\te.g @kofnet_bot sni TZ\n\n"
     "Made with ❤️ by @AlphaBei from Kenya 🇰🇪"
 )
 
