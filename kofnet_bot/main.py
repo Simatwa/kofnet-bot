@@ -241,9 +241,7 @@ def handle_inline_query(inline_query: telebot.types.InlineQuery):
         return bot.answer_inline_query(inline_query.id, feedback_options)
 
     except Exception as e:
-        print(
-            f"Error while handling inline query : {e.args[1] if e.args and len(e.args)>1 else e}"
-        )
+        pass
 
 
 @bot.message_handler(commands=["stats"], is_admin=True)
