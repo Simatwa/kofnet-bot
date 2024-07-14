@@ -44,7 +44,6 @@ class ForceSubscribeFilter(AdvancedCustomFilter):
                 check_membership = self.bot.get_chat_member(
                     self.channel_id, message.from_user.id
                 )
-                print(check_membership)
                 if check_membership:
                     return True
             except:
