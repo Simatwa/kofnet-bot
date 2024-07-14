@@ -95,7 +95,9 @@ def inline_refresh_button(country_code: str):
     return button
 
 
-@bot.message_handler(commands=["country"])
+@bot.message_handler(
+    commands=["country"], force_sub=kofnet_bot.config.bot_config.force_sub
+)
 def echo_list_of_countries(message: types.Message):
     """Issue button to select countries"""
     markup = types.InlineKeyboardMarkup(row_width=3)
@@ -113,7 +115,7 @@ def echo_list_of_countries(message: types.Message):
     return bot.send_message(message.chat.id, "Select country", reply_markup=markup)
 
 
-@bot.message_handler(commands=["sni"])
+@bot.message_handler(commands=["sni"], force_sub=kofnet_bot.config.bot_config.force_sub)
 @argument_required()
 def echo_sni_bug_host(message: types.Message, key: str):
     """Sends back sni bug host value for a particular country|code"""
@@ -246,7 +248,11 @@ def check_stats(message: types.Message):
     )
 
 
-@bot.message_handler(func=lambda msg: True)
+@bot.message_handler(
+    func=lambda msg: (
+        False if msg.text and msg.text.split(" ")[0] in ["/sni", "/country"] else True
+    )
+)
 def echo_usage_info(message: types.Message):
     """Display help message"""
     bot_cache["stats"]["users"] += 1
@@ -260,3 +266,10 @@ def echo_usage_info(message: types.Message):
 
 
 bot.add_custom_filter(kofnet_bot.filters.IsAdminFilter())
+bot.add_custom_filter(
+    kofnet_bot.filters.ForceSubscribeFilter(
+        kofnet_bot.config.bot_config.channel_id,
+        kofnet_bot.config.bot_config.channel_url,
+        bot,
+    )
+)
