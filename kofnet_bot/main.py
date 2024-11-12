@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 bot = telebot.TeleBot(kofnet_bot.config.bot_config.token, disable_web_page_preview=True)
 me = bot.get_me()
 
+bot.remove_webhook()
+
 usage_info = (
     "Welcome.\n"
     "Get to know SNI bug host for mobile ISPs.\n"
