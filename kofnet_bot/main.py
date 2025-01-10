@@ -9,6 +9,7 @@ import kofnet_bot.filters
 from bs4 import BeautifulSoup
 
 bot = telebot.TeleBot(kofnet_bot.config.bot_config.token, disable_web_page_preview=True)
+receiving_address = kofnet_bot.config.bot_config.receiving_address
 me = bot.get_me()
 
 bot.remove_webhook()
@@ -152,6 +153,20 @@ def echo_sni_bug_host(message: types.Message, key: str):
                 message.chat.id,
                 plain_text,
                 reply_markup=markup,  # parse_mode="HTML"
+            )
+
+        if receiving_address:
+            tip_markup = types.InlineKeyboardMarkup()
+            tip_markup.add(inline_delete_button(message))
+            bot.send_message(
+                message.chat.id,
+                text=(
+                    "<strong>Are you finding this bot useful?</strong>\n"
+                    "Consider tipping developer to motivate him to do even better.\n\n"
+                    f"BTC : <strong>{receiving_address}</strong>"
+                ),
+                parse_mode="HTML",
+                reply_markup=tip_markup,
             )
 
     except KeyError:

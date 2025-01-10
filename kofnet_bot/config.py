@@ -10,6 +10,7 @@ class BotConfig(BaseModel):
     channel_id: int | None = None
     channel_url: HttpUrl | None = None
     force_sub: bool = False
+    receiving_address: str = None
 
 
 bot_config: BotConfig = BotConfig(**dotenv_values())
