@@ -1,0 +1,14 @@
+[Unit]
+Description=Kofnet telegram bot
+After=network.target
+
+[Service]
+Type=simple
+# User=
+WorkingDirectory=/home/ubuntu/git/kofnet-bot/
+ExecStart=/home/ubuntu/git/kofnet-bot/.venv/bin/python run.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
