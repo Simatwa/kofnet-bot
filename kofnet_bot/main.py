@@ -25,7 +25,7 @@ usage_info = (
     "\t\te.g /sni Malaysia\n\n"
     f"Inline mode : @kofnet_bot sni [CODE]\n"
     "\t\te.g @kofnet_bot sni TZ\n\n"
-    "Made with ❤️ by @AlphaBei from Kenya 🇰🇪"
+    "Made with ❤️ by @fayallc from Kenya 🇰🇪"
 )
 
 bot_cache = {
@@ -276,7 +276,7 @@ def echo_usage_info(message: types.Message):
     markup = types.InlineKeyboardMarkup(row_width=2)
     markup.add(inline_delete_button(message))
     markup.add(
-        types.InlineKeyboardButton("Contact Developer", url="https://t.me/AlphaBei")
+        types.InlineKeyboardButton("Contact Developer", url="https://t.me/fayallc")
     )
 
     return bot.reply_to(message, usage_info, reply_markup=markup)
